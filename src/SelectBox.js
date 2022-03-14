@@ -7,7 +7,7 @@ function SelectBox() {
   const dispatch = useDispatch();
 
   return (
-    <Box sx={{ minWidth: 120 }}>
+    <Box sx={{ mb: 3 }}>
       <FormControl fullWidth>
         <InputLabel>Level</InputLabel>
         <Select
