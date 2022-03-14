@@ -9,7 +9,7 @@ function Tc({ row, cell, rowIndex, cellIndex }) {
   const dispatch = useDispatch();
 
   const stylingCell = (type) => {
-    if (type === 0 || type === -3) {
+    if (type >= 0 || type === -3) {
       return {
         bgcolor: "white",
         border: "1px solid black",
@@ -34,10 +34,13 @@ function Tc({ row, cell, rowIndex, cellIndex }) {
       return "";
     } else if (type === -3) {
       return "펑";
-    } else {
+    } else if (type === -2) {
       return "X";
+    } else {
+      return type || ""; //단축평가
     }
   };
+
   return (
     <TableCell
       sx={

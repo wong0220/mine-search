@@ -63,6 +63,7 @@ export const mineSlice = createSlice({
 
     SetMine: (state, action) => {
       if (!action.payload[4]) {
+        // 게임 중단이 되지 않았을 경우에만 밑의 로직 실행
         if (state.tableData.length === 0) {
           state.tableData = startGame(
             action.payload[0],
@@ -76,6 +77,34 @@ export const mineSlice = createSlice({
             state.stop = true;
           } else {
             state.tableData[action.payload[2]][action.payload[3]] = 0;
+
+            let searchedMine = []; //클릭한 칸 주변 지뢰 갯수를 저장하는 변수
+
+            // 맨 윗칸과 맨 아랫칸의 경우 양 옆칸의 지뢰만 계산
+            if (state.tableData[action.payload[2] - 1]) {
+              searchedMine = searchedMine.concat(
+                state.tableData[action.payload[2] - 1][action.payload[3] - 1],
+                state.tableData[action.payload[2] - 1][action.payload[3]],
+                state.tableData[action.payload[2] - 1][action.payload[3] + 1]
+              );
+            }
+
+            searchedMine = searchedMine.concat(
+              state.tableData[action.payload[2]][action.payload[3] - 1],
+              state.tableData[action.payload[2]][action.payload[3] + 1]
+            );
+
+            if (state.tableData[action.payload[2] + 1]) {
+              searchedMine = searchedMine.concat(
+                state.tableData[action.payload[2] + 1][action.payload[3] - 1],
+                state.tableData[action.payload[2] + 1][action.payload[3]],
+                state.tableData[action.payload[2] + 1][action.payload[3] + 1]
+              );
+            }
+
+            const count = searchedMine.filter((el) => el === -2).length;
+
+            state.tableData[action.payload[2]][action.payload[3]] = count;
           }
         }
       } else {
