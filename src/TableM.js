@@ -9,8 +9,8 @@ function TableM({ level }) {
         <TableBody>
           {Array(8)
             .fill()
-            .map((el) => (
-              <Tr key={nanoid()} row={8} cell={8} />
+            .map((el, idx) => (
+              <Tr key={nanoid()} row={8} cell={8} rowIndex={idx} />
             ))}
         </TableBody>
       );
@@ -19,25 +19,27 @@ function TableM({ level }) {
         <TableBody>
           {Array(16)
             .fill()
-            .map((el) => (
-              <Tr key={nanoid()} row={8} cell={16} />
+            .map((el, idx) => (
+              <Tr key={nanoid()} row={16} cell={16} rowIndex={idx} />
             ))}
         </TableBody>
       );
-    } else {
+    } else if (level === 30) {
       return (
         <TableBody>
           {Array(16)
             .fill()
-            .map((el) => (
-              <Tr key={nanoid()} row={16} cell={32} />
+            .map((el, idx) => (
+              <Tr key={nanoid()} row={16} cell={32} rowIndex={idx} />
             ))}
         </TableBody>
       );
+    } else {
+      <></>;
     }
   };
 
-  return <Table sx={{ width: 100, height: 100 }}>{SetTr(level)}</Table>;
+  return <Table>{SetTr(level)}</Table>;
 }
 
 export default TableM;

@@ -16,7 +16,9 @@ function MineSearch() {
         }}
       >
         <SelectBox />
-        <TableM level={level} />
+        <Box>
+          <TableM level={level} />
+        </Box>
       </Box>
     </Box>
   );
