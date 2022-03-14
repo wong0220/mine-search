@@ -1,8 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
-
+/*
+상태값
+0: 열린 상태
+-1: 비어있지만 아직 열리지 않은 상태
+-2: 지뢰가 숨어져있는 상태
+-3: 지뢰를 밟은 상태
+*/
 const initialState = {
   level: "",
   tableData: [],
+  stop: false,
 };
 
 const startGame = (row, cell, rowIndex, cellIndex) => {
@@ -55,13 +62,24 @@ export const mineSlice = createSlice({
     },
 
     SetMine: (state, action) => {
-      if (state.tableData.length === 0) {
-        state.tableData = startGame(
-          action.payload[0],
-          action.payload[1],
-          action.payload[2],
-          action.payload[3]
-        );
+      if (!action.payload[4]) {
+        if (state.tableData.length === 0) {
+          state.tableData = startGame(
+            action.payload[0],
+            action.payload[1],
+            action.payload[2],
+            action.payload[3]
+          );
+        } else {
+          if (state.tableData[action.payload[2]][action.payload[3]] === -2) {
+            state.tableData[action.payload[2]][action.payload[3]] = -3;
+            state.stop = true;
+          } else {
+            state.tableData[action.payload[2]][action.payload[3]] = 0;
+          }
+        }
+      } else {
+        return;
       }
     },
   },
