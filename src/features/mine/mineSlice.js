@@ -1,19 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  value: 0,
+  level: "",
 };
 
 export const mineSlice = createSlice({
-  name: "counter",
+  name: "mine",
   initialState,
   reducers: {
-    increment: (state) => {
-      state.value += 1;
+    SetLevel: (state, action) => {
+      state.level = action.payload;
     },
   },
 });
 
-export const { increment } = mineSlice.actions;
+export const { SetLevel } = mineSlice.actions;
 
 export default mineSlice.reducer;
