@@ -17,6 +17,16 @@ const initialState = {
 
 const startGame = (row, cell, mine) => {
   // 첫칸을 눌렀을 때 게임시작
+
+  if (row * cell === 64) {
+    // 난이도에 따른 지뢰 갯수 설정
+    mine = 5;
+  } else if (row * cell === 256) {
+    mine = 15;
+  } else {
+    mine = 25;
+  }
+
   const number = Array(row * cell) // 지뢰가 할당될 수 있는 배열 row*cell 길이만큼 생성
     .fill()
     .map((el, idx) => {

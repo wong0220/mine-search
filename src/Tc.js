@@ -9,9 +9,20 @@ function Tc({ row, cell, rowIndex, cellIndex }) {
   const dispatch = useDispatch();
 
   const stylingCell = (type) => {
-    if (type >= 0 || type === -3) {
+    // 상태값에 따른 디자인
+    if (type >= 0) {
       return {
         bgcolor: "white",
+        border: "1px solid black",
+        boxShadow: 5,
+        borderRadius: 1,
+        width: "20px",
+        height: "20px",
+        textAlign: "center",
+      };
+    } else if (type === -3) {
+      return {
+        bgcolor: "red",
         border: "1px solid black",
         boxShadow: 5,
         borderRadius: 1,
@@ -34,6 +45,7 @@ function Tc({ row, cell, rowIndex, cellIndex }) {
   };
 
   const printText = (type) => {
+    // 상태값에 따른 텍스트
     if (type === 0) {
       return "";
     } else if (type === -1) {
