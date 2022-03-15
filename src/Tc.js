@@ -6,7 +6,6 @@ function Tc({ row, cell, rowIndex, cellIndex }) {
   const tableData = useSelector((state) => state.mine.tableData);
   const isStop = useSelector((state) => state.mine.stop);
 
-  const temp = useSelector((state) => console.log(state.mine.count));
   const dispatch = useDispatch();
 
   const stylingCell = (type) => {

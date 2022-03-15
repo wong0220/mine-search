@@ -12,12 +12,11 @@ const initialState = {
   stop: false,
   count: 0,
   isWin: false,
-  isLose: false,
+  mine: 5,
 };
 
-const startGame = (row, cell, rowIndex, cellIndex) => {
+const startGame = (row, cell, mine) => {
   // 첫칸을 눌렀을 때 게임시작
-  let mine = 5;
   const number = Array(row * cell) // 폭탄이 할당될 수 있는 배열 생성
     .fill()
     .map((el, idx) => {
@@ -51,8 +50,36 @@ const startGame = (row, cell, rowIndex, cellIndex) => {
     data[width][height] = -2;
   }
 
-  data[rowIndex][cellIndex] = 0; // 첫 클릭한 부분은 지뢰칸이라면  0으로 초기화
   return data;
+};
+
+const SearchMine = (table, row, cell) => {
+  let searchedMine = []; //클릭한 칸 주변 지뢰 갯수를 저장하는 변수
+
+  // 맨 윗칸과 맨 아랫칸의 경우 양 옆칸의 지뢰만 계산
+  if (table[row - 1]) {
+    searchedMine = searchedMine.concat(
+      table[row - 1][cell - 1],
+      table[row - 1][cell],
+      table[row - 1][cell + 1]
+    );
+  }
+
+  searchedMine = searchedMine.concat(
+    table[row][cell - 1],
+    table[row][cell + 1]
+  );
+
+  if (table[row + 1]) {
+    searchedMine = searchedMine.concat(
+      table[row + 1][cell - 1],
+      table[row + 1][cell],
+      table[row + 1][cell + 1]
+    );
+  }
+  const count = searchedMine.filter((el) => el === -2).length;
+
+  table[row][cell] = count;
 };
 
 export const mineSlice = createSlice({
@@ -66,7 +93,6 @@ export const mineSlice = createSlice({
       state.stop = false;
       state.count = 0;
       state.isWin = false;
-      state.isLose = false;
     },
 
     SetMine: (state, action) => {
@@ -74,56 +100,35 @@ export const mineSlice = createSlice({
         // 게임 중단이 되지 않았을 경우에만 밑의 로직 실행
 
         if (state.tableData.length === 0) {
+          // 게임시작 후 첫번째 칸을 클릭 시 지뢰 배치
           state.tableData = startGame(
             action.payload[0],
             action.payload[1],
-            action.payload[2],
-            action.payload[3]
+            state.mine
           );
           state.count += 1;
+          if (state.tableData[action.payload[2]][action.payload[3]] === -2) {
+            state.mine = 4;
+          }
+
+          SearchMine(state.tableData, action.payload[2], action.payload[3]);
         } else {
           if (state.tableData[action.payload[2]][action.payload[3]] === -2) {
             state.tableData[action.payload[2]][action.payload[3]] = -3;
             state.stop = true;
-            state.isLose = true;
           } else {
             if (state.tableData[action.payload[2]][action.payload[3]] === -1) {
               state.count += 1; // 열린 칸 수 카운트
-              if (action.payload[0] * action.payload[1] - 5 === state.count) {
+              if (
+                action.payload[0] * action.payload[1] - state.mine ===
+                state.count
+              ) {
                 state.stop = true;
                 state.isWin = true;
               }
             }
 
-            state.tableData[action.payload[2]][action.payload[3]] = 0;
-
-            let searchedMine = []; //클릭한 칸 주변 지뢰 갯수를 저장하는 변수
-
-            // 맨 윗칸과 맨 아랫칸의 경우 양 옆칸의 지뢰만 계산
-            if (state.tableData[action.payload[2] - 1]) {
-              searchedMine = searchedMine.concat(
-                state.tableData[action.payload[2] - 1][action.payload[3] - 1],
-                state.tableData[action.payload[2] - 1][action.payload[3]],
-                state.tableData[action.payload[2] - 1][action.payload[3] + 1]
-              );
-            }
-
-            searchedMine = searchedMine.concat(
-              state.tableData[action.payload[2]][action.payload[3] - 1],
-              state.tableData[action.payload[2]][action.payload[3] + 1]
-            );
-
-            if (state.tableData[action.payload[2] + 1]) {
-              searchedMine = searchedMine.concat(
-                state.tableData[action.payload[2] + 1][action.payload[3] - 1],
-                state.tableData[action.payload[2] + 1][action.payload[3]],
-                state.tableData[action.payload[2] + 1][action.payload[3] + 1]
-              );
-            }
-
-            const count = searchedMine.filter((el) => el === -2).length;
-
-            state.tableData[action.payload[2]][action.payload[3]] = count;
+            SearchMine(state.tableData, action.payload[2], action.payload[3]);
           }
         }
       } else {
