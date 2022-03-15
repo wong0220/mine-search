@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 /*
 상태값
-0: 열린 상태
+ 0: 열린 상태
 -1: 비어있지만 아직 열리지 않은 상태
 -2: 지뢰가 숨어져있는 상태
 -3: 지뢰를 밟은 상태
@@ -10,6 +10,8 @@ const initialState = {
   level: "",
   tableData: [],
   stop: false,
+  count: 0,
+  isWin: false,
 };
 
 const startGame = (row, cell, rowIndex, cellIndex) => {
@@ -57,13 +59,22 @@ export const mineSlice = createSlice({
   initialState,
   reducers: {
     SetLevel: (state, action) => {
+      // 난이도 설정시 상태값 초기화
       state.level = action.payload;
       state.tableData = [];
+      state.stop = false;
+      state.count = 0;
+      state.isWin = false;
     },
 
     SetMine: (state, action) => {
       if (!action.payload[4]) {
         // 게임 중단이 되지 않았을 경우에만 밑의 로직 실행
+        // if (action.payload[0] * action.payload[1] - 5 === state.count + 1) {
+        //   state.stop = true;
+        //   state.isWin = true;
+        // }
+
         if (state.tableData.length === 0) {
           state.tableData = startGame(
             action.payload[0],
@@ -71,11 +82,20 @@ export const mineSlice = createSlice({
             action.payload[2],
             action.payload[3]
           );
+          state.count += 1;
         } else {
           if (state.tableData[action.payload[2]][action.payload[3]] === -2) {
             state.tableData[action.payload[2]][action.payload[3]] = -3;
             state.stop = true;
           } else {
+            if (state.tableData[action.payload[2]][action.payload[3]] === -1) {
+              state.count += 1; // 열린 칸 수 카운트
+              if (action.payload[0] * action.payload[1] - 5 === state.count) {
+                state.stop = true;
+                state.isWin = true;
+              }
+            }
+
             state.tableData[action.payload[2]][action.payload[3]] = 0;
 
             let searchedMine = []; //클릭한 칸 주변 지뢰 갯수를 저장하는 변수
