@@ -13,3 +13,8 @@ React, Material UI , Redux-toolkit
 ### `사용한 라이브러리`
 
 Material UI , Redux-toolkit , nanoid
+
+### `구현 기능`
+
+1. 첫번째 빈칸을 열었을 경우에는 지뢰가 터지지 않는 기능
+2. 난이도 변경

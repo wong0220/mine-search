@@ -15,6 +15,9 @@ function Tc({ row, cell, rowIndex, cellIndex }) {
         border: "1px solid black",
         boxShadow: 5,
         borderRadius: 1,
+        width: "20px",
+        height: "20px",
+        textAlign: "center",
       };
     } else {
       return {
@@ -23,6 +26,9 @@ function Tc({ row, cell, rowIndex, cellIndex }) {
         boxShadow: 5,
         borderRadius: 1,
         cursor: "pointer",
+        width: "20px",
+        height: "20px",
+        textAlign: "center",
       };
     }
   };
@@ -35,7 +41,7 @@ function Tc({ row, cell, rowIndex, cellIndex }) {
     } else if (type === -3) {
       return "펑";
     } else if (type === -2) {
-      return "X";
+      return "";
     } else {
       return type || ""; //단축평가
     }
@@ -52,6 +58,9 @@ function Tc({ row, cell, rowIndex, cellIndex }) {
               boxShadow: 5,
               borderRadius: 1,
               cursor: "pointer",
+              width: "20px",
+              height: "20px",
+              textAlign: "center",
             }
       }
       onClick={() => {

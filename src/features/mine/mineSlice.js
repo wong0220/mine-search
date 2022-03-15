@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 /*
-상태값
+상태값   * 양수의 경우에는 주변 지뢰의 갯수를 표현하는데 이용하므로 음수로 값 설정 *
  0: 열린 상태
 -1: 비어있지만 아직 열리지 않은 상태
 -2: 지뢰가 숨어져있는 상태
@@ -17,7 +17,7 @@ const initialState = {
 
 const startGame = (row, cell, mine) => {
   // 첫칸을 눌렀을 때 게임시작
-  const number = Array(row * cell) // 폭탄이 할당될 수 있는 배열 생성
+  const number = Array(row * cell) // 지뢰가 할당될 수 있는 배열 row*cell 길이만큼 생성
     .fill()
     .map((el, idx) => {
       return idx;
@@ -25,16 +25,16 @@ const startGame = (row, cell, mine) => {
 
   const shuffle = [];
   while (number.length > row * cell - mine) {
-    // 설정한 폭탄 갯수만큼 배열에 랜덤값 할당
+    // 전역상태에 설정된 지뢰 갯수만큼 배열에 랜덤값 할당
 
-    const bomb = number.splice(Math.floor(Math.random() * number.length), 1)[0];
+    const bomb = number.splice(Math.floor(Math.random() * number.length), 1)[0]; // 중복되는 값이 없도록 랜덤에 크기만큼 곱해주고 지뢰가 할당된 number 배열에서 값 제거
     shuffle.push(bomb);
   }
 
   const data = [];
 
   for (let i = 0; i < row; i++) {
-    // 난이도에 따라  지뢰찾기 2차원 배열 생성
+    // 사용자가 설정한  난이도에 따라  지뢰찾기 2차원 배열 생성
     const rowData = [];
     data.push(rowData);
     for (let j = 0; j < cell; j++) {
@@ -54,7 +54,8 @@ const startGame = (row, cell, mine) => {
 };
 
 const SearchMine = (table, row, cell) => {
-  let searchedMine = []; //클릭한 칸 주변 지뢰 갯수를 저장하는 변수
+  // 클릭한 칸 주변 8칸에 있는 지뢰의 갯수를 탐색하는 함수
+  let searchedMine = []; //클릭한 칸 주변 상태값을 저장하는 변수
 
   // 맨 윗칸과 맨 아랫칸의 경우 양 옆칸의 지뢰만 계산
   if (table[row - 1]) {
@@ -77,9 +78,10 @@ const SearchMine = (table, row, cell) => {
       table[row + 1][cell + 1]
     );
   }
-  const count = searchedMine.filter((el) => el === -2).length;
 
-  table[row][cell] = count;
+  const count = searchedMine.filter((el) => el === -2).length; // 상태값이 지뢰(-2)인 경우만  필터링
+
+  table[row][cell] = count; // 필터링된 갯수를 선택한 테이블 인덱스에 할당
 };
 
 export const mineSlice = createSlice({
@@ -106,20 +108,29 @@ export const mineSlice = createSlice({
             action.payload[1],
             state.mine
           );
+
           state.count += 1;
+
           if (state.tableData[action.payload[2]][action.payload[3]] === -2) {
+            // 첫 번째로 클릭한 칸이 지뢰가 배치됐던 칸이었을 경우 기존에 설정한 지뢰 갯수에서 -1
             state.mine = 4;
           }
 
           SearchMine(state.tableData, action.payload[2], action.payload[3]);
         } else {
+          // 모든 지뢰가 배치됐을 경우 실행되는 로직
+
           if (state.tableData[action.payload[2]][action.payload[3]] === -2) {
+            // 클릭한 칸이 지뢰였을 경우
             state.tableData[action.payload[2]][action.payload[3]] = -3;
             state.stop = true;
           } else {
             if (state.tableData[action.payload[2]][action.payload[3]] === -1) {
+              // 비어있으며 열리지 않은 칸을 선택했을 경우
               state.count += 1; // 열린 칸 수 카운트
+
               if (
+                // (모든 칸 수 - 배치된 지뢰 개수) === 열린 칸 수일 경우 승리,게임 종료
                 action.payload[0] * action.payload[1] - state.mine ===
                 state.count
               ) {
@@ -132,6 +143,7 @@ export const mineSlice = createSlice({
           }
         }
       } else {
+        // 게임이 종료되었다면 아무 동작도 하지 않으며 종료
         return;
       }
     },

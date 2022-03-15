@@ -4,6 +4,7 @@ import Tr from "./Tr";
 
 function TableM({ level }) {
   const SetTr = () => {
+    // 사용자가 설정한 난이도에 따른 테이블 크기 설정
     if (level === 10) {
       return (
         <TableBody>
