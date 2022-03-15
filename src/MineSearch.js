@@ -6,7 +6,8 @@ import TableM from "./TableM";
 function MineSearch() {
   const level = useSelector((state) => state.mine.level);
   const isWin = useSelector((state) => state.mine.isWin);
-  console.log(isWin);
+  const isStop = useSelector((state) => state.mine.stop);
+
   return (
     <Box sx={{ mt: 3 }}>
       <Box
@@ -18,6 +19,7 @@ function MineSearch() {
       >
         <SelectBox />
         {isWin && <Alert severity="success">승리하셨습니다!</Alert>}
+        {isStop && <Alert severity="error">패배하셨습니다!</Alert>}
         <Box sx={{ mt: 3 }}>
           <TableM level={level} />
         </Box>

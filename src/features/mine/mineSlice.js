@@ -12,6 +12,7 @@ const initialState = {
   stop: false,
   count: 0,
   isWin: false,
+  isLose: false,
 };
 
 const startGame = (row, cell, rowIndex, cellIndex) => {
@@ -65,15 +66,12 @@ export const mineSlice = createSlice({
       state.stop = false;
       state.count = 0;
       state.isWin = false;
+      state.isLose = false;
     },
 
     SetMine: (state, action) => {
       if (!action.payload[4]) {
         // 게임 중단이 되지 않았을 경우에만 밑의 로직 실행
-        // if (action.payload[0] * action.payload[1] - 5 === state.count + 1) {
-        //   state.stop = true;
-        //   state.isWin = true;
-        // }
 
         if (state.tableData.length === 0) {
           state.tableData = startGame(
@@ -87,6 +85,7 @@ export const mineSlice = createSlice({
           if (state.tableData[action.payload[2]][action.payload[3]] === -2) {
             state.tableData[action.payload[2]][action.payload[3]] = -3;
             state.stop = true;
+            state.isLose = true;
           } else {
             if (state.tableData[action.payload[2]][action.payload[3]] === -1) {
               state.count += 1; // 열린 칸 수 카운트
