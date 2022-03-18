@@ -18,3 +18,7 @@ Material UI , Redux-toolkit , nanoid
 
 1. 첫번째 빈칸을 열었을 경우에는 지뢰가 터지지 않는 기능
 2. 난이도 변경
+
+
+## `Netlify 배포`
+https://dreamy-tesla-29573b.netlify.app/
