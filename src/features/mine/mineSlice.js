@@ -60,7 +60,7 @@ const startGame = (row, cell, mine) => {
     data[width][height] = -2;
   }
 
-  return data;
+  return [data, mine];
 };
 
 const SearchMine = (table, row, cell) => {
@@ -113,23 +113,27 @@ export const mineSlice = createSlice({
 
         if (state.tableData.length === 0) {
           // 게임시작 후 첫번째 칸을 클릭 시 지뢰 배치
-          state.tableData = startGame(
+          [state.tableData, state.mine] = startGame(
             action.payload[0],
             action.payload[1],
             state.mine
           );
 
           state.count += 1;
-
           if (state.tableData[action.payload[2]][action.payload[3]] === -2) {
             // 첫 번째로 클릭한 칸이 지뢰가 배치됐던 칸이었을 경우 기존에 설정한 지뢰 갯수에서 -1
-            state.mine = 4;
+            if (action.payload[0] * action.payload[1] === 64) {
+              state.mine = 4;
+            } else if (action.payload[0] * action.payload[1] === 256) {
+              state.mine = 14;
+            } else {
+              state.mine = 24;
+            }
           }
 
           SearchMine(state.tableData, action.payload[2], action.payload[3]);
         } else {
           // 모든 지뢰가 배치됐을 경우 실행되는 로직
-
           if (state.tableData[action.payload[2]][action.payload[3]] === -2) {
             // 클릭한 칸이 지뢰였을 경우
             state.tableData[action.payload[2]][action.payload[3]] = -3;
